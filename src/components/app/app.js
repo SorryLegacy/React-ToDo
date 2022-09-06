@@ -27,7 +27,8 @@ export default class App extends Component {
             this.createTodoData('Make an Awesome app'),
             this.createTodoData('Have a lunch')
          ],
-        text: ''
+        text: '',
+        filter: 'all'
     };
 
     deleteItem = (id) => {
@@ -40,8 +41,8 @@ export default class App extends Component {
             return {
                 todoData: newData
             }
-        })
-    }
+        });
+    };
 
     addItem = (text) =>{
         const newItem = this.createTodoData(text)
@@ -69,7 +70,7 @@ export default class App extends Component {
                 todoData: this.toggleProperty(todoData, id, 'important')
             }
         });
-    }
+    };
 
     onToggleDone = (id) => {
         this.setState(({todoData}) =>{
@@ -77,13 +78,19 @@ export default class App extends Component {
                 todoData: this.toggleProperty(todoData, id, 'done')
             }
         });
-    }
+    };
 
     onSearchPanel = (text) => {
         this.setState({
             text
-        })
-    }
+        });
+    };
+
+    onFilter = (filter) => {
+        this.setState({
+            filter
+        });
+    };
 
     searchItem = (items, text) => {
         if (text.length === 0) {
@@ -94,10 +101,25 @@ export default class App extends Component {
         });
     }
 
+    filterItems(items, filter) {
+        if (filter === 'all'){
+            return items;
+        }
+        else if (filter === 'active'){
+            return items.filter((el) => !el.done);
+        }
+        else if (filter === 'done'){
+            return items.filter((el) => el.done);
+        }
+        else {
+            return items
+        }
+    }
+
     render() {
 
-        const { todoData, text } = this.state
-        const items = this.searchItem(todoData, text)
+        const { todoData, text, filter } = this.state;
+        const items = this.filterItems(this.searchItem(todoData, text), filter);
         const doneCount = todoData.filter((el) => el.done).length;
         const todoCount = todoData.length - doneCount;
          return (
@@ -105,7 +127,7 @@ export default class App extends Component {
               <AppHeader toDo={todoCount} done={doneCount} />
               <div className="top-panel d-flex">
                 <SearchPanel onSearchPanel={this.onSearchPanel}/>
-                <ItemStatusFilter/>
+                <ItemStatusFilter filter={filter} onFilter={this.onFilter}/>
               </div>
 
               <ToDoList

@@ -23,7 +23,6 @@ export default class SearchPanel extends Component {
               className="form-control search-input"
               placeholder="type to search"
               onChange={this.onText}
-              value={this.state.text}/>
-  );
+              value={this.state.text}/>);
   };
 }
